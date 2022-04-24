@@ -1,0 +1,9 @@
+http:
+  port: 8083
+  maxHeaderBytes: 1
+  readTimeout: 10s
+  writeTimeout: 10s
+
+mongo:
+  username: 
+  databaseName: 
