@@ -10,9 +10,10 @@ import (
 )
 
 type Authorization interface {
-	GetUser(ctx context.Context, username, password string) (domain.UserLogin, error)
+	CreateUser(ctx context.Context, name, email, password string) error
+	GetUser(ctx context.Context, email, password string) (domain.UserAuth, error)
 	SetSession(ctx context.Context, userID primitive.ObjectID, session domain.Session) error
-	GetByRefreshToken(ctx context.Context, refreshToken string) (domain.UserLogin, error)
+	GetByRefreshToken(ctx context.Context, refreshToken string) (domain.UserAuth, error)
 	RemoveRefreshToken(ctx context.Context, refreshToken string) error
 }
 

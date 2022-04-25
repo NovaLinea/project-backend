@@ -19,15 +19,19 @@ func NewAuthorizationRepo(db *mongo.Database) *AuthorizationRepo {
 	return &AuthorizationRepo{db: db.Collection(usersCollection)}
 }
 
-func (r *AuthorizationRepo) GetUser(ctx context.Context, username, password string) (domain.UserLogin, error) {
-	var user domain.UserLogin
+func (r *AuthorizationRepo) CreateUser(ctx context.Context, name, email, password string) error {
+	_, err := r.db.InsertOne(ctx, bson.M{"name": name, "email": email, "password": password})
+	return err
+}
 
-	if err := r.db.FindOne(ctx, bson.M{"username": username, "password": password}).Decode(&user); err != nil {
+func (r *AuthorizationRepo) GetUser(ctx context.Context, email, password string) (domain.UserAuth, error) {
+	var user domain.UserAuth
+
+	if err := r.db.FindOne(ctx, bson.M{"email": email, "password": password}).Decode(&user); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return domain.UserLogin{}, domain.ErrUserNotFound
+			return domain.UserAuth{}, domain.ErrUserNotFound
 		}
-		return domain.UserLogin{}, err
-
+		return domain.UserAuth{}, err
 	}
 
 	return user, nil
@@ -42,16 +46,16 @@ func (r *AuthorizationRepo) SetSession(ctx context.Context, userID primitive.Obj
 	return err
 }
 
-func (r *AuthorizationRepo) GetByRefreshToken(ctx context.Context, refreshToken string) (domain.UserLogin, error) {
-	var user domain.UserLogin
+func (r *AuthorizationRepo) GetByRefreshToken(ctx context.Context, refreshToken string) (domain.UserAuth, error) {
+	var user domain.UserAuth
 	if err := r.db.FindOne(ctx, bson.M{
 		"session.refreshToken": refreshToken,
 		"session.expiresAt":    bson.M{"$gt": time.Now()},
 	}).Decode(&user); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return domain.UserLogin{}, domain.ErrUserNotFound
+			return domain.UserAuth{}, domain.ErrUserNotFound
 		}
-		return domain.UserLogin{}, err
+		return domain.UserAuth{}, err
 
 	}
 

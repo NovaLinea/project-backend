@@ -3,7 +3,8 @@ package service
 import (
 	"context"
 
-	"github.com/ProjectUnion/project-backend.git/pkg/repository"
+	"github.com/ProjectUnion/project-backend.git/internal/domain"
+	"github.com/ProjectUnion/project-backend.git/internal/repository"
 )
 
 type userData struct {
@@ -14,7 +15,8 @@ type userData struct {
 }
 
 type Authorization interface {
-	Login(ctx context.Context, username, password string) (userData, error)
+	Register(ctx context.Context, inp domain.UserAuth) (userData, error)
+	Login(ctx context.Context, email, password string) (userData, error)
 	Refresh(ctx context.Context, refreshToken string) (userData, error)
 	Logout(ctx context.Context, refreshToken string) error
 	ParseToken(token string) (string, error)

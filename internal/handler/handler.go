@@ -3,8 +3,8 @@ package handler
 import (
 	"os"
 
+	"github.com/ProjectUnion/project-backend.git/internal/service"
 	"github.com/ProjectUnion/project-backend.git/pkg/logging"
-	"github.com/ProjectUnion/project-backend.git/pkg/service"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -40,7 +40,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	api := router.Group("/api")
 	{
-		api.POST("/login", h.Login)
+		api.POST("/signup", h.Register)
+		api.POST("/signin", h.Login)
 		api.GET("/refresh", h.Refresh)
 		api.GET("/logout", h.Logout)
 	}

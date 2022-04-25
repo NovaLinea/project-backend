@@ -5,18 +5,51 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/ProjectUnion/project-backend.git/internal/domain"
 	"github.com/gin-gonic/gin"
-	"github.com/Traking-work/traking-backend.git/internal/domain"
 )
 
-func (h *Handler) Login(c *gin.Context) {
-	var inp domain.UserLogin
+func (h *Handler) Register(c *gin.Context) {
+	var inp domain.UserAuth
 	if err := c.BindJSON(&inp); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "Invalid input body")
 		return
 	}
 
-	res, err := h.services.Authorization.Login(c, inp.Username, inp.Password)
+	res, err := h.services.Authorization.Register(c, inp)
+	if err != nil {
+		if errors.Is(err, domain.ErrUserNotFound) {
+			newErrorResponse(c, http.StatusBadRequest, err.Error())
+			return
+		}
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     "refreshToken",
+		Value:    res.RefreshToken,
+		Expires:  time.Now().Add(30 * 24 * time.Hour),
+		HttpOnly: true,
+	})
+
+	h.logger.Infof("Register user %s", res.UserID)
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"accessToken": res.AccessToken,
+		//"refreshToken": res.RefreshToken,
+		"userID": res.UserID,
+	})
+}
+
+func (h *Handler) Login(c *gin.Context) {
+	var inp domain.UserAuth
+	if err := c.BindJSON(&inp); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid input body")
+		return
+	}
+
+	res, err := h.services.Authorization.Login(c, inp.Email, inp.Password)
 	if err != nil {
 		if errors.Is(err, domain.ErrUserNotFound) {
 			newErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -37,7 +70,6 @@ func (h *Handler) Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"accessToken": res.AccessToken,
-		"position": res.Position,
 		//"refreshToken": res.RefreshToken,
 		"userID": res.UserID,
 	})
@@ -72,7 +104,7 @@ func (h *Handler) Refresh(c *gin.Context) {
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"accessToken": res.AccessToken,
-		"position": res.Position,
+		"position":    res.Position,
 		//"refreshToken": res.RefreshToken,
 		"userID": res.UserID,
 	})

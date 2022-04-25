@@ -4,12 +4,10 @@ import (
 	"net/http"
 	"os"
 
-	//"crypto/tls"
-
-	"github.com/Traking-work/traking-backend.git/pkg/handler"
-	"github.com/Traking-work/traking-backend.git/pkg/logging"
-	"github.com/Traking-work/traking-backend.git/pkg/repository"
-	"github.com/Traking-work/traking-backend.git/pkg/service"
+	"github.com/ProjectUnion/project-backend.git/internal/handler"
+	"github.com/ProjectUnion/project-backend.git/internal/repository"
+	"github.com/ProjectUnion/project-backend.git/internal/service"
+	"github.com/ProjectUnion/project-backend.git/pkg/logging"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 )

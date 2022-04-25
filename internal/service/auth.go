@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/ProjectUnion/project-backend.git/internal/domain"
+	"github.com/ProjectUnion/project-backend.git/internal/repository"
 	"github.com/ProjectUnion/project-backend.git/pkg/logging"
-	"github.com/ProjectUnion/project-backend.git/pkg/repository"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -34,13 +34,27 @@ func NewAuthorizationService(repo repository.Authorization) *AuthorizationServic
 	return &AuthorizationService{repo: repo}
 }
 
-func (s *AuthorizationService) Login(ctx context.Context, username, password string) (userData, error) {
-	user, err := s.repo.GetUser(ctx, username, generatePasswordHash(password))
+func (s *AuthorizationService) Register(ctx context.Context, inp domain.UserAuth) (userData, error) {
+	err := s.repo.CreateUser(ctx, inp.Name, inp.Email, generatePasswordHash(inp.Password))
 	if err != nil {
 		return userData{}, err
 	}
 
-	return s.CreateSession(ctx, user.ID, user.Position)
+	user, err := s.repo.GetUser(ctx, inp.Email, generatePasswordHash(inp.Password))
+	if err != nil {
+		return userData{}, err
+	}
+
+	return s.CreateSession(ctx, user.ID)
+}
+
+func (s *AuthorizationService) Login(ctx context.Context, email, password string) (userData, error) {
+	user, err := s.repo.GetUser(ctx, email, generatePasswordHash(password))
+	if err != nil {
+		return userData{}, err
+	}
+
+	return s.CreateSession(ctx, user.ID)
 }
 
 func (s *AuthorizationService) Refresh(ctx context.Context, refreshToken string) (userData, error) {
@@ -54,7 +68,7 @@ func (s *AuthorizationService) Refresh(ctx context.Context, refreshToken string)
 		return userData{}, err
 	}
 
-	return s.CreateSession(ctx, user.ID, user.Position)
+	return s.CreateSession(ctx, user.ID)
 }
 
 func (s *AuthorizationService) Logout(ctx context.Context, refreshToken string) error {
@@ -66,14 +80,13 @@ func (s *AuthorizationService) Logout(ctx context.Context, refreshToken string) 
 	return nil
 }
 
-func (s *AuthorizationService) CreateSession(ctx context.Context, userId primitive.ObjectID, position string) (userData, error) {
+func (s *AuthorizationService) CreateSession(ctx context.Context, userId primitive.ObjectID) (userData, error) {
 	var (
 		res userData
 		err error
 	)
 
 	res.UserID = userId.Hex()
-	res.Position = position
 	res.AccessToken, err = NewJWT(userId.Hex(), accessTokenTTL)
 	if err != nil {
 		return res, err

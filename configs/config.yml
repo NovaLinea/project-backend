@@ -5,5 +5,5 @@ http:
   writeTimeout: 10s
 
 mongo:
-  username: 
-  databaseName: 
+  username: b0shka
+  databaseName: project-union
