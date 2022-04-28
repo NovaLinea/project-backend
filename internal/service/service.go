@@ -5,6 +5,7 @@ import (
 
 	"github.com/ProjectUnion/project-backend.git/internal/domain"
 	"github.com/ProjectUnion/project-backend.git/internal/repository"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type userData struct {
@@ -22,12 +23,18 @@ type Authorization interface {
 	ParseToken(token string) (string, error)
 }
 
+type User interface {
+	GetData(ctx context.Context, userID primitive.ObjectID) (domain.UserData, error)
+}
+
 type Service struct {
 	Authorization
+	User
 }
 
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthorizationService(repos.Authorization),
+		User:          NewUserService(repos.User),
 	}
 }

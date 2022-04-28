@@ -17,12 +17,18 @@ type Authorization interface {
 	RemoveRefreshToken(ctx context.Context, refreshToken string) error
 }
 
+type User interface {
+	GetData(ctx context.Context, userID primitive.ObjectID) (domain.UserData, error)
+}
+
 type Repository struct {
 	Authorization
+	User
 }
 
 func NewRepository(db *mongo.Client) *Repository {
 	return &Repository{
 		Authorization: NewAuthorizationRepo(db.Database(viper.GetString("mongo.databaseName"))),
+		User:          NewUserRepo(db.Database(viper.GetString("mongo.databaseName"))),
 	}
 }
