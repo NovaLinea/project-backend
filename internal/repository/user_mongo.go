@@ -38,7 +38,7 @@ func (r *UserRepo) GetDataSettings(ctx context.Context, userID primitive.ObjectI
 }
 
 func (r *UserRepo) SaveData(ctx context.Context, userID primitive.ObjectID, inp domain.UserSettings) error {
-	_, err := r.db.UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$set": bson.M{"name": inp.Name, "email": inp.Email, "description": inp.Description}})
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$set": bson.M{"name": inp.Name, "email": inp.Email, "description": inp.Description, "notifications": inp.Notifications}})
 	return err
 }
 

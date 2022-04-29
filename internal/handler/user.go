@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/ProjectUnion/project-backend.git/internal/domain"
@@ -53,7 +52,6 @@ func (h *Handler) SaveDataUser(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, "Invalid input body")
 		return
 	}
-	fmt.Println(inp)
 
 	if err := h.services.SaveData(c, userID, inp); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
