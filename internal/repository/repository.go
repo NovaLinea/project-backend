@@ -19,6 +19,7 @@ type Authorization interface {
 
 type User interface {
 	GetData(ctx context.Context, userID primitive.ObjectID) (domain.UserData, error)
+	SaveData(ctx context.Context, userID primitive.ObjectID, inp domain.UserData) error
 }
 
 type Repository struct {

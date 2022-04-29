@@ -26,3 +26,8 @@ func (r *UserRepo) GetData(ctx context.Context, userID primitive.ObjectID) (doma
 
 	return data, nil
 }
+
+func (r *UserRepo) SaveData(ctx context.Context, userID primitive.ObjectID, inp domain.UserData) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$set": bson.M{"name": inp.Name, "email": inp.Email, "description": inp.Description, "phone": inp.Phone}})
+	return err
+}

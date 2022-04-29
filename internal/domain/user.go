@@ -13,6 +13,6 @@ type UserData struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name        string             `json:"name" binding:"required"`
 	Email       string             `json:"email" binding:"required"`
-	Decsription string             `json:"description"`
+	Description string             `json:"description"`
 	Phone       string             `json:"phone"`
 }

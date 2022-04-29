@@ -51,6 +51,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		user := api.Group("/user")
 		{
 			user.GET("/:userID/fetch-data", h.GetDataUser)
+			user.POST("/:userID/save-data", h.SaveDataUser)
 		}
 	}
 

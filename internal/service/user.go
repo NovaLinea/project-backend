@@ -27,3 +27,8 @@ func (s *UserService) GetData(ctx context.Context, userID primitive.ObjectID) (d
 	data, err := s.repo.GetData(ctx, userID)
 	return data, err
 }
+
+func (s *UserService) SaveData(ctx context.Context, userID primitive.ObjectID, inp domain.UserData) error {
+	err := s.repo.SaveData(ctx, userID, inp)
+	return err
+}
