@@ -56,6 +56,11 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			user.POST("/:userID/change-password", h.ChangePassword)
 			user.GET("/:userID/delete-account", h.DeleteAccount)
 		}
+
+		project := api.Group("/project")
+		{
+			project.POST("/:ID/create", h.CreateProject)
+		}
 	}
 
 	return router

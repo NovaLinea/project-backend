@@ -26,14 +26,20 @@ type User interface {
 	DeleteAccount(ctx context.Context, userID primitive.ObjectID) error
 }
 
+type Project interface {
+	CreateProject(ctx context.Context, inp domain.ProjectData) error
+}
+
 type Repository struct {
 	Authorization
 	User
+	Project
 }
 
 func NewRepository(db *mongo.Client) *Repository {
 	return &Repository{
 		Authorization: NewAuthorizationRepo(db.Database(viper.GetString("mongo.databaseName"))),
 		User:          NewUserRepo(db.Database(viper.GetString("mongo.databaseName"))),
+		Project:       NewProjectRepo(db.Database(viper.GetString("mongo.databaseName"))),
 	}
 }

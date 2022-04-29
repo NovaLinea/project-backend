@@ -31,14 +31,20 @@ type User interface {
 	DeleteAccount(ctx context.Context, userID primitive.ObjectID) error
 }
 
+type Project interface {
+	CreateProject(ctx context.Context, inp domain.ProjectData) error
+}
+
 type Service struct {
 	Authorization
 	User
+	Project
 }
 
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthorizationService(repos.Authorization),
 		User:          NewUserService(repos.User),
+		Project:       NewProjectService(repos.Project),
 	}
 }
