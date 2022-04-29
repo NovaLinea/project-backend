@@ -18,8 +18,12 @@ type Authorization interface {
 }
 
 type User interface {
-	GetData(ctx context.Context, userID primitive.ObjectID) (domain.UserData, error)
-	SaveData(ctx context.Context, userID primitive.ObjectID, inp domain.UserData) error
+	GetDataProfile(ctx context.Context, userID primitive.ObjectID) (domain.UserProfile, error)
+	GetDataSettings(ctx context.Context, userID primitive.ObjectID) (domain.UserSettings, error)
+	SaveData(ctx context.Context, userID primitive.ObjectID, inp domain.UserSettings) error
+	GetPasswordHash(ctx context.Context, userID primitive.ObjectID) (string, error)
+	ChangePassword(ctx context.Context, userID primitive.ObjectID, password string) error
+	DeleteAccount(ctx context.Context, userID primitive.ObjectID) error
 }
 
 type Repository struct {

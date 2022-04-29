@@ -9,19 +9,34 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (h *Handler) GetDataUser(c *gin.Context) {
+func (h *Handler) GetDataProfile(c *gin.Context) {
 	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	data, err := h.services.GetData(c, userID)
+	data, err := h.services.GetDataProfile(c, userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	fmt.Println(data)
+
+	c.JSON(http.StatusOK, data)
+}
+
+func (h *Handler) GetDataSettings(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	data, err := h.services.GetDataSettings(c, userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
 
 	c.JSON(http.StatusOK, data)
 }
@@ -33,7 +48,7 @@ func (h *Handler) SaveDataUser(c *gin.Context) {
 		return
 	}
 
-	var inp domain.UserData
+	var inp domain.UserSettings
 	if err := c.BindJSON(&inp); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "Invalid input body")
 		return
@@ -41,6 +56,38 @@ func (h *Handler) SaveDataUser(c *gin.Context) {
 	fmt.Println(inp)
 
 	if err := h.services.SaveData(c, userID, inp); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+}
+
+func (h *Handler) ChangePassword(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var inp domain.ChangePassword
+	if err := c.BindJSON(&inp); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid input body")
+		return
+	}
+
+	if err := h.services.ChangePassword(c, userID, inp); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+}
+
+func (h *Handler) DeleteAccount(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := h.services.DeleteAccount(c, userID); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}

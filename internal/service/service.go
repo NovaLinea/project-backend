@@ -24,8 +24,11 @@ type Authorization interface {
 }
 
 type User interface {
-	GetData(ctx context.Context, userID primitive.ObjectID) (domain.UserData, error)
-	SaveData(ctx context.Context, userID primitive.ObjectID, inp domain.UserData) error
+	GetDataProfile(ctx context.Context, userID primitive.ObjectID) (domain.UserProfile, error)
+	GetDataSettings(ctx context.Context, userID primitive.ObjectID) (domain.UserSettings, error)
+	SaveData(ctx context.Context, userID primitive.ObjectID, inp domain.UserSettings) error
+	ChangePassword(ctx context.Context, userID primitive.ObjectID, inp domain.ChangePassword) error
+	DeleteAccount(ctx context.Context, userID primitive.ObjectID) error
 }
 
 type Service struct {

@@ -9,10 +9,20 @@ type UserAuth struct {
 	Password string             `json:"password" binding:"required"`
 }
 
-type UserData struct {
+type UserProfile struct {
+	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Name        string             `json:"name" binding:"required"`
+	Description string             `json:"description"`
+}
+
+type UserSettings struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name        string             `json:"name" binding:"required"`
 	Email       string             `json:"email" binding:"required"`
 	Description string             `json:"description"`
-	Phone       string             `json:"phone"`
+}
+
+type ChangePassword struct {
+	OldPassword string `json:"old_password" binding:"required"`
+	NewPassword string `json:"new_password" binding:"required"`
 }
