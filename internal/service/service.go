@@ -33,6 +33,7 @@ type User interface {
 
 type Project interface {
 	CreateProject(ctx context.Context, inp domain.ProjectData) error
+	GetProjects(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error)
 }
 
 type Service struct {

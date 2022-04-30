@@ -27,3 +27,19 @@ func (h *Handler) CreateProject(c *gin.Context) {
 		return
 	}
 }
+
+func (h *Handler) GetProjects(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	projects, err := h.services.GetProjects(c, userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, projects)
+}

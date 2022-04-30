@@ -60,6 +60,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		project := api.Group("/project")
 		{
 			project.POST("/:ID/create", h.CreateProject)
+			project.GET("/:ID/get-projects", h.GetProjects)
 		}
 	}
 
