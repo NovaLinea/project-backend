@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ProjectUnion/project-backend.git/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
@@ -33,6 +34,7 @@ func (r *UserRepo) GetDataSettings(ctx context.Context, userID primitive.ObjectI
 	if err := r.db.FindOne(ctx, bson.M{"_id": userID}).Decode(&data); err != nil {
 		return domain.UserSettings{}, err
 	}
+	fmt.Println(data)
 
 	return data, nil
 }
@@ -59,5 +61,10 @@ func (r *UserRepo) ChangePassword(ctx context.Context, userID primitive.ObjectID
 
 func (r *UserRepo) DeleteAccount(ctx context.Context, userID primitive.ObjectID) error {
 	_, err := r.db.DeleteOne(ctx, bson.M{"_id": userID})
+	if err != nil {
+		return err
+	}
+
+	_, err = r.db.Database().Collection(projectsCollection).DeleteMany(ctx, bson.M{"userid": userID})
 	return err
 }

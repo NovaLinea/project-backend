@@ -20,7 +20,21 @@ func NewAuthorizationRepo(db *mongo.Database) *AuthorizationRepo {
 }
 
 func (r *AuthorizationRepo) CreateUser(ctx context.Context, name, email, password string) error {
-	_, err := r.db.InsertOne(ctx, bson.M{"name": name, "email": email, "password": password})
+	var inp domain.UserCreate
+	var ntfs domain.TypeNotifications
+
+	ntfs.NewMessage = true
+	ntfs.NewComment = true
+	ntfs.NewSub = true
+	ntfs.Update = true
+	ntfs.EmailNotification = true
+
+	inp.Name = name
+	inp.Email = email
+	inp.Password = password
+	inp.Notifications = ntfs
+
+	_, err := r.db.InsertOne(ctx, inp)
 	return err
 }
 
