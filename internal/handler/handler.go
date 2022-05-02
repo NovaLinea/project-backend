@@ -57,6 +57,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			user.GET("/:userID/delete-account", h.DeleteAccount)
 			user.GET("/:userID/get-likes-favorites", h.GetLikesFavorites)
 			user.GET("/:userID/get-data-params", h.GetDataParams)
+			user.GET("/:userID/subscribe/:accountID", h.SubscribeUser)
+			user.GET("/:userID/unsubscribe/:accountID", h.UnSubscribeUser)
 		}
 
 		project := api.Group("/project")

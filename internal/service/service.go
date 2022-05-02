@@ -31,6 +31,8 @@ type User interface {
 	DeleteAccount(ctx context.Context, userID primitive.ObjectID) error
 	GetLikesFavorites(ctx context.Context, userID primitive.ObjectID) (domain.UserLikesFavorites, error)
 	GetDataParams(ctx context.Context, userID primitive.ObjectID) (domain.UserDataParams, error)
+	SubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error
+	UnSubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error
 }
 
 type Project interface {

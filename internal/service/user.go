@@ -70,3 +70,13 @@ func (s *UserService) GetDataParams(ctx context.Context, userID primitive.Object
 	data, err := s.repo.GetDataParams(ctx, userID)
 	return data, err
 }
+
+func (s *UserService) SubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error {
+	err := s.repo.SubscribeUser(ctx, userID, accoumtID)
+	return err
+}
+
+func (s *UserService) UnSubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error {
+	err := s.repo.UnSubscribeUser(ctx, userID, accoumtID)
+	return err
+}

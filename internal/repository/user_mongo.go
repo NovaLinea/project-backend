@@ -85,9 +85,29 @@ func (r *UserRepo) GetLikesFavorites(ctx context.Context, userID primitive.Objec
 func (r *UserRepo) GetDataParams(ctx context.Context, userID primitive.ObjectID) (domain.UserDataParams, error) {
 	var data domain.UserDataParams
 
-	if err := r.db.Database().Collection(usersCollection).FindOne(ctx, bson.M{"_id": userID}).Decode(&data); err != nil {
+	if err := r.db.FindOne(ctx, bson.M{"_id": userID}).Decode(&data); err != nil {
 		return domain.UserDataParams{}, err
 	}
 
 	return data, nil
+}
+
+func (r *UserRepo) SubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$push": bson.M{"followings": accoumtID}})
+	if err != nil {
+		return err
+	}
+
+	_, err = r.db.UpdateOne(ctx, bson.M{"_id": accoumtID}, bson.M{"$push": bson.M{"follows": userID}})
+	return err
+}
+
+func (r *UserRepo) UnSubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$pull": bson.M{"followings": accoumtID}})
+	if err != nil {
+		return err
+	}
+
+	_, err = r.db.UpdateOne(ctx, bson.M{"_id": accoumtID}, bson.M{"$pull": bson.M{"follows": userID}})
+	return err
 }
