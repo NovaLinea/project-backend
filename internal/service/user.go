@@ -60,3 +60,8 @@ func (s *UserService) DeleteAccount(ctx context.Context, userID primitive.Object
 	err := s.repo.DeleteAccount(ctx, userID)
 	return err
 }
+
+func (s *UserService) GetLikesFavorites(ctx context.Context, userID primitive.ObjectID) (domain.UserLikesFavorites, error) {
+	lists, err := s.repo.GetLikesFavorites(ctx, userID)
+	return lists, err
+}

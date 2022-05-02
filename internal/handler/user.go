@@ -90,3 +90,19 @@ func (h *Handler) DeleteAccount(c *gin.Context) {
 		return
 	}
 }
+
+func (h *Handler) GetLikesFavorites(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	lists, err := h.services.GetLikesFavorites(c, userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, lists)
+}

@@ -32,8 +32,6 @@ type UserProfile struct {
 	Photo       string               `json:"photo"`
 	Follows     []primitive.ObjectID `json:"follows"`
 	Followings  []primitive.ObjectID `json:"followings"`
-	Favorites   []primitive.ObjectID `json:"favorites"`
-	Likes       []primitive.ObjectID `json:"likes"`
 }
 
 type UserSettings struct {
@@ -56,4 +54,10 @@ type TypeNotifications struct {
 	NewComment        bool `json:"new_comment" bson:"new_comment"`
 	Update            bool `json:"update" bson:"update"`
 	EmailNotification bool `json:"email_notification" bson:"email_notification"`
+}
+
+type UserLikesFavorites struct {
+	ID        primitive.ObjectID   `json:"id" bson:"_id,omitempty"`
+	Favorites []primitive.ObjectID `json:"favorites"`
+	Likes     []primitive.ObjectID `json:"likes"`
 }

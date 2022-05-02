@@ -44,6 +44,22 @@ func (h *Handler) GetProjects(c *gin.Context) {
 	c.JSON(http.StatusOK, projects)
 }
 
+func (h *Handler) GetFavoritesProjects(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	projects, err := h.services.GetFavoritesProjects(c, userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, projects)
+}
+
 func (h *Handler) LikeProject(c *gin.Context) {
 	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
 	if err != nil {

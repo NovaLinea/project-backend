@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/ProjectUnion/project-backend.git/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
@@ -34,7 +33,6 @@ func (r *UserRepo) GetDataSettings(ctx context.Context, userID primitive.ObjectI
 	if err := r.db.FindOne(ctx, bson.M{"_id": userID}).Decode(&data); err != nil {
 		return domain.UserSettings{}, err
 	}
-	fmt.Println(data)
 
 	return data, nil
 }
@@ -67,4 +65,14 @@ func (r *UserRepo) DeleteAccount(ctx context.Context, userID primitive.ObjectID)
 
 	_, err = r.db.Database().Collection(projectsCollection).DeleteMany(ctx, bson.M{"userid": userID})
 	return err
+}
+
+func (r *UserRepo) GetLikesFavorites(ctx context.Context, userID primitive.ObjectID) (domain.UserLikesFavorites, error) {
+	var lists domain.UserLikesFavorites
+
+	if err := r.db.Database().Collection(usersCollection).FindOne(ctx, bson.M{"_id": userID}).Decode(&lists); err != nil {
+		return domain.UserLikesFavorites{}, err
+	}
+
+	return lists, nil
 }

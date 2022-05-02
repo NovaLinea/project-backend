@@ -33,6 +33,11 @@ func (s *ProjectService) GetProjects(ctx context.Context, userID primitive.Objec
 	return projects, err
 }
 
+func (s *ProjectService) GetFavoritesProjects(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
+	projects, err := s.repo.GetFavoritesProjects(ctx, userID)
+	return projects, err
+}
+
 func (s *ProjectService) LikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error {
 	err := s.repo.LikeProject(ctx, projectID, userID)
 	return err
