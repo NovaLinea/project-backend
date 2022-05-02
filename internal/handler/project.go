@@ -22,6 +22,14 @@ func (h *Handler) CreateProject(c *gin.Context) {
 	}
 	inp.UserID = userID
 
+	userData, err := h.services.GetDataProfile(c, userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	inp.NameCreator = userData.Name
+	inp.PhotoCreator = userData.Photo
+
 	if err := h.services.CreateProject(c, inp); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return

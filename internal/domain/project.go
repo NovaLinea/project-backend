@@ -9,6 +9,8 @@ import (
 type ProjectData struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	UserID        primitive.ObjectID `json:"user_id" bson:"userid"`
+	NameCreator   string             `json:"name_creator" bson:"namecreator"`
+	PhotoCreator  string             `json:"photo_creator" bson:"photocreator"`
 	Name          string             `json:"name" binding:"required"`
 	Descritpion   string             `json:"description" binding:"required"`
 	Photos        []string           `json:"photos"`
