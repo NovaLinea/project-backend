@@ -6,8 +6,8 @@ import (
 	"github.com/ProjectUnion/project-backend.git/internal/domain"
 	"github.com/ProjectUnion/project-backend.git/internal/repository"
 	"github.com/ProjectUnion/project-backend.git/pkg/logging"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ProjectService struct {
@@ -31,4 +31,14 @@ func (s *ProjectService) CreateProject(ctx context.Context, inp domain.ProjectDa
 func (s *ProjectService) GetProjects(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
 	projects, err := s.repo.GetProjects(ctx, userID)
 	return projects, err
+}
+
+func (s *ProjectService) LikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error {
+	err := s.repo.LikeProject(ctx, projectID, userID)
+	return err
+}
+
+func (s *ProjectService) DislikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error {
+	err := s.repo.DislikeProject(ctx, projectID, userID)
+	return err
 }

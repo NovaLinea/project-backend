@@ -61,6 +61,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			project.POST("/:ID/create", h.CreateProject)
 			project.GET("/:ID/get-projects", h.GetProjects)
+			project.GET("/:ID/like/:userID", h.LikeProject)
+			project.GET("/:ID/dislike/:userID", h.DislikeProject)
 		}
 	}
 

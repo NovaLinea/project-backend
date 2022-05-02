@@ -1,6 +1,10 @@
 package domain
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type ProjectData struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
@@ -15,5 +19,5 @@ type ProjectData struct {
 	Likes         uint32             `json:"likes"`
 	Comments      []string           `json:"comments"`
 	Type          string             `json:"type" binding:"required"`
-	Time          string             `json:"time" binding:"required"`
+	Time          time.Time          `json:"time" binding:"required"`
 }

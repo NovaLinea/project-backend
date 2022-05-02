@@ -29,6 +29,8 @@ type User interface {
 type Project interface {
 	CreateProject(ctx context.Context, inp domain.ProjectData) error
 	GetProjects(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error)
+	LikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error
+	DislikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error
 }
 
 type Repository struct {

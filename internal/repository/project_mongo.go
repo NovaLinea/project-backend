@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type ProjectRepo struct {
@@ -18,6 +19,8 @@ func NewProjectRepo(db *mongo.Database) *ProjectRepo {
 }
 
 func (r *ProjectRepo) CreateProject(ctx context.Context, inp domain.ProjectData) error {
+	inp.Comments = []string{}
+
 	_, err := r.db.InsertOne(ctx, inp)
 	return err
 }
@@ -25,7 +28,14 @@ func (r *ProjectRepo) CreateProject(ctx context.Context, inp domain.ProjectData)
 func (r *ProjectRepo) GetProjects(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
 	var projects []domain.ProjectData
 
-	cur, err := r.db.Find(ctx, bson.M{"userid": userID})
+	filter := bson.M{"userid": userID}
+	sort := bson.M{"time": -1}
+
+	opts := options.FindOptions{
+		Sort: &sort,
+	}
+
+	cur, err := r.db.Find(ctx, filter, &opts)
 	if err != nil {
 		return nil, err
 	}
@@ -35,4 +45,24 @@ func (r *ProjectRepo) GetProjects(ctx context.Context, userID primitive.ObjectID
 	}
 
 	return projects, nil
+}
+
+func (r *ProjectRepo) LikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": projectID}, bson.M{"$inc": bson.M{"likes": 1}})
+	if err != nil {
+		return err
+	}
+
+	_, err = r.db.Database().Collection(usersCollection).UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$push": bson.M{"likes": projectID}})
+	return err
+}
+
+func (r *ProjectRepo) DislikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": projectID}, bson.M{"$inc": bson.M{"likes": -1}})
+	if err != nil {
+		return err
+	}
+
+	_, err = r.db.Database().Collection(usersCollection).UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$pull": bson.M{"likes": projectID}})
+	return err
 }

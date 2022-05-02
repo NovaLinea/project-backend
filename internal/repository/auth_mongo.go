@@ -32,6 +32,10 @@ func (r *AuthorizationRepo) CreateUser(ctx context.Context, name, email, passwor
 	inp.Name = name
 	inp.Email = email
 	inp.Password = password
+	inp.Favorites = []primitive.ObjectID{}
+	inp.Follows = []primitive.ObjectID{}
+	inp.Followings = []primitive.ObjectID{}
+	inp.Likes = []primitive.ObjectID{}
 	inp.Notifications = ntfs
 
 	_, err := r.db.InsertOne(ctx, inp)

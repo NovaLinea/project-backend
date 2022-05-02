@@ -43,3 +43,41 @@ func (h *Handler) GetProjects(c *gin.Context) {
 
 	c.JSON(http.StatusOK, projects)
 }
+
+func (h *Handler) LikeProject(c *gin.Context) {
+	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := h.services.LikeProject(c, projectID, userID); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+}
+
+func (h *Handler) DislikeProject(c *gin.Context) {
+	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := h.services.DislikeProject(c, projectID, userID); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+}
