@@ -36,14 +36,24 @@ func (h *Handler) CreateProject(c *gin.Context) {
 	}
 }
 
-func (h *Handler) GetProjects(c *gin.Context) {
+func (h *Handler) GetProjectsPopular(c *gin.Context) {
+	projects, err := h.services.GetProjectsPopular(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, projects)
+}
+
+func (h *Handler) GetProjectsUser(c *gin.Context) {
 	userID, err := primitive.ObjectIDFromHex(c.Param("ID"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	projects, err := h.services.GetProjects(c, userID)
+	projects, err := h.services.GetProjectsUser(c, userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return

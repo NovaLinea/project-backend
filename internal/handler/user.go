@@ -106,3 +106,22 @@ func (h *Handler) GetLikesFavorites(c *gin.Context) {
 
 	c.JSON(http.StatusOK, lists)
 }
+
+func (h *Handler) GetDataParams(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	data, err := h.services.GetDataParams(c, userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"follows":    len(data.Follows),
+		"followings": len(data.Followings),
+	})
+}

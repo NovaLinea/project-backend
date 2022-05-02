@@ -56,12 +56,14 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			user.POST("/:userID/change-password", h.ChangePassword)
 			user.GET("/:userID/delete-account", h.DeleteAccount)
 			user.GET("/:userID/get-likes-favorites", h.GetLikesFavorites)
+			user.GET("/:userID/get-data-params", h.GetDataParams)
 		}
 
 		project := api.Group("/project")
 		{
 			project.POST("/:ID/create", h.CreateProject)
-			project.GET("/:ID/get-projects", h.GetProjects)
+			project.GET("/:ID/get-projects-popular", h.GetProjectsPopular)
+			project.GET("/:ID/get-projects-user", h.GetProjectsUser)
 			project.GET("/:ID/get-favorites-projects", h.GetFavoritesProjects)
 			project.GET("/:ID/like/:userID", h.LikeProject)
 			project.GET("/:ID/dislike/:userID", h.DislikeProject)

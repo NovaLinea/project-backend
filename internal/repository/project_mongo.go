@@ -25,7 +25,29 @@ func (r *ProjectRepo) CreateProject(ctx context.Context, inp domain.ProjectData)
 	return err
 }
 
-func (r *ProjectRepo) GetProjects(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
+func (r *ProjectRepo) GetProjectsPopular(ctx context.Context) ([]domain.ProjectData, error) {
+	var projects []domain.ProjectData
+
+	filter := bson.M{}
+	sort := bson.M{"time": -1}
+
+	opts := options.FindOptions{
+		Sort: &sort,
+	}
+
+	cur, err := r.db.Find(ctx, filter, &opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := cur.All(ctx, &projects); err != nil {
+		return nil, err
+	}
+
+	return projects, nil
+}
+
+func (r *ProjectRepo) GetProjectsUser(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
 	var projects []domain.ProjectData
 
 	filter := bson.M{"userid": userID}

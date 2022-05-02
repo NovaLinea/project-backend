@@ -28,8 +28,13 @@ func (s *ProjectService) CreateProject(ctx context.Context, inp domain.ProjectDa
 	return err
 }
 
-func (s *ProjectService) GetProjects(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
-	projects, err := s.repo.GetProjects(ctx, userID)
+func (s *ProjectService) GetProjectsPopular(ctx context.Context) ([]domain.ProjectData, error) {
+	projects, err := s.repo.GetProjectsPopular(ctx)
+	return projects, err
+}
+
+func (s *ProjectService) GetProjectsUser(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
+	projects, err := s.repo.GetProjectsUser(ctx, userID)
 	return projects, err
 }
 

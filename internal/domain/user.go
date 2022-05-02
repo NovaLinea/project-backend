@@ -25,13 +25,11 @@ type UserCreate struct {
 }
 
 type UserProfile struct {
-	ID          primitive.ObjectID   `json:"id" bson:"_id,omitempty"`
-	Name        string               `json:"name" binding:"required"`
-	Description string               `json:"description"`
-	VerifyEmail bool                 `json:"verify_email"`
-	Photo       string               `json:"photo"`
-	Follows     []primitive.ObjectID `json:"follows"`
-	Followings  []primitive.ObjectID `json:"followings"`
+	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Name        string             `json:"name" binding:"required"`
+	Description string             `json:"description"`
+	VerifyEmail bool               `json:"verify_email"`
+	Photo       string             `json:"photo"`
 }
 
 type UserSettings struct {
@@ -60,4 +58,10 @@ type UserLikesFavorites struct {
 	ID        primitive.ObjectID   `json:"id" bson:"_id,omitempty"`
 	Favorites []primitive.ObjectID `json:"favorites"`
 	Likes     []primitive.ObjectID `json:"likes"`
+}
+
+type UserDataParams struct {
+	ID         primitive.ObjectID   `json:"id" bson:"_id,omitempty"`
+	Follows    []primitive.ObjectID `json:"follows"`
+	Followings []primitive.ObjectID `json:"followings"`
 }

@@ -65,3 +65,8 @@ func (s *UserService) GetLikesFavorites(ctx context.Context, userID primitive.Ob
 	lists, err := s.repo.GetLikesFavorites(ctx, userID)
 	return lists, err
 }
+
+func (s *UserService) GetDataParams(ctx context.Context, userID primitive.ObjectID) (domain.UserDataParams, error) {
+	data, err := s.repo.GetDataParams(ctx, userID)
+	return data, err
+}

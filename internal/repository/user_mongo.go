@@ -75,9 +75,19 @@ func (r *UserRepo) DeleteAccount(ctx context.Context, userID primitive.ObjectID)
 func (r *UserRepo) GetLikesFavorites(ctx context.Context, userID primitive.ObjectID) (domain.UserLikesFavorites, error) {
 	var lists domain.UserLikesFavorites
 
-	if err := r.db.Database().Collection(usersCollection).FindOne(ctx, bson.M{"_id": userID}).Decode(&lists); err != nil {
+	if err := r.db.FindOne(ctx, bson.M{"_id": userID}).Decode(&lists); err != nil {
 		return domain.UserLikesFavorites{}, err
 	}
 
 	return lists, nil
+}
+
+func (r *UserRepo) GetDataParams(ctx context.Context, userID primitive.ObjectID) (domain.UserDataParams, error) {
+	var data domain.UserDataParams
+
+	if err := r.db.Database().Collection(usersCollection).FindOne(ctx, bson.M{"_id": userID}).Decode(&data); err != nil {
+		return domain.UserDataParams{}, err
+	}
+
+	return data, nil
 }
