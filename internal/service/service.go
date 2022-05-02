@@ -36,6 +36,8 @@ type Project interface {
 	GetProjects(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error)
 	LikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error
 	DislikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error
+	FavoriteProject(ctx context.Context, projectID, userID primitive.ObjectID) error
+	RemoveFavoriteProject(ctx context.Context, projectID, userID primitive.ObjectID) error
 }
 
 type Service struct {

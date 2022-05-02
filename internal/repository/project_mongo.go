@@ -66,3 +66,13 @@ func (r *ProjectRepo) DislikeProject(ctx context.Context, projectID, userID prim
 	_, err = r.db.Database().Collection(usersCollection).UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$pull": bson.M{"likes": projectID}})
 	return err
 }
+
+func (r *ProjectRepo) FavoriteProject(ctx context.Context, projectID, userID primitive.ObjectID) error {
+	_, err := r.db.Database().Collection(usersCollection).UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$push": bson.M{"favorites": projectID}})
+	return err
+}
+
+func (r *ProjectRepo) RemoveFavoriteProject(ctx context.Context, projectID, userID primitive.ObjectID) error {
+	_, err := r.db.Database().Collection(usersCollection).UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$pull": bson.M{"favorites": projectID}})
+	return err
+}

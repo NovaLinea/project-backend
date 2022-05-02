@@ -42,3 +42,13 @@ func (s *ProjectService) DislikeProject(ctx context.Context, projectID, userID p
 	err := s.repo.DislikeProject(ctx, projectID, userID)
 	return err
 }
+
+func (s *ProjectService) FavoriteProject(ctx context.Context, projectID, userID primitive.ObjectID) error {
+	err := s.repo.FavoriteProject(ctx, projectID, userID)
+	return err
+}
+
+func (s *ProjectService) RemoveFavoriteProject(ctx context.Context, projectID, userID primitive.ObjectID) error {
+	err := s.repo.RemoveFavoriteProject(ctx, projectID, userID)
+	return err
+}

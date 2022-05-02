@@ -63,6 +63,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			project.GET("/:ID/get-projects", h.GetProjects)
 			project.GET("/:ID/like/:userID", h.LikeProject)
 			project.GET("/:ID/dislike/:userID", h.DislikeProject)
+			project.GET("/:ID/favorite/:userID", h.FavoriteProject)
+			project.GET("/:ID/remove-favorite/:userID", h.RemoveFavoriteProject)
 		}
 	}
 

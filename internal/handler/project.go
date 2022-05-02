@@ -81,3 +81,41 @@ func (h *Handler) DislikeProject(c *gin.Context) {
 		return
 	}
 }
+
+func (h *Handler) FavoriteProject(c *gin.Context) {
+	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := h.services.FavoriteProject(c, projectID, userID); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+}
+
+func (h *Handler) RemoveFavoriteProject(c *gin.Context) {
+	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := h.services.RemoveFavoriteProject(c, projectID, userID); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+}
