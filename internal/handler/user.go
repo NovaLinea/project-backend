@@ -107,6 +107,16 @@ func (h *Handler) GetLikesFavorites(c *gin.Context) {
 	c.JSON(http.StatusOK, lists)
 }
 
+func (h *Handler) GetFollowsFollowings(c *gin.Context, userID primitive.ObjectID) domain.UserFollowsFollowings {
+	data, err := h.services.GetDataParams(c, userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return domain.UserFollowsFollowings{}
+	}
+
+	return data
+}
+
 func (h *Handler) GetDataParams(c *gin.Context) {
 	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
 	if err != nil {
@@ -114,16 +124,23 @@ func (h *Handler) GetDataParams(c *gin.Context) {
 		return
 	}
 
-	data, err := h.services.GetDataParams(c, userID)
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
+	data := h.GetFollowsFollowings(c, userID)
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"follows":    len(data.Follows),
 		"followings": len(data.Followings),
 	})
+}
+
+func (h *Handler) GetFollowings(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	data := h.GetFollowsFollowings(c, userID)
+	c.JSON(http.StatusOK, data.Followings)
 }
 
 func (h *Handler) SubscribeUser(c *gin.Context) {

@@ -38,6 +38,11 @@ func (s *ProjectService) GetProjectsUser(ctx context.Context, userID primitive.O
 	return projects, err
 }
 
+func (s *ProjectService) GetProjectsHome(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
+	projects, err := s.repo.GetProjectsHome(ctx, userID)
+	return projects, err
+}
+
 func (s *ProjectService) GetFavoritesProjects(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
 	projects, err := s.repo.GetFavoritesProjects(ctx, userID)
 	return projects, err

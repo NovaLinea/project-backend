@@ -62,6 +62,22 @@ func (h *Handler) GetProjectsUser(c *gin.Context) {
 	c.JSON(http.StatusOK, projects)
 }
 
+func (h *Handler) GetProjectsHome(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	projects, err := h.services.GetProjectsHome(c, userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, projects)
+}
+
 func (h *Handler) GetFavoritesProjects(c *gin.Context) {
 	userID, err := primitive.ObjectIDFromHex(c.Param("ID"))
 	if err != nil {

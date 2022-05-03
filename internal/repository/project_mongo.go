@@ -69,6 +69,33 @@ func (r *ProjectRepo) GetProjectsUser(ctx context.Context, userID primitive.Obje
 	return projects, nil
 }
 
+func (r *ProjectRepo) GetProjectsHome(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
+	var projects []domain.ProjectData
+	var user domain.UserFollowsFollowings
+
+	if err := r.db.Database().Collection(usersCollection).FindOne(ctx, bson.M{"_id": userID}).Decode(&user); err != nil {
+		return nil, err
+	}
+
+	filter := bson.M{"userid": bson.M{"$in": user.Followings}}
+	sort := bson.M{"time": -1}
+
+	opts := options.FindOptions{
+		Sort: &sort,
+	}
+
+	cur, err := r.db.Find(ctx, filter, &opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := cur.All(ctx, &projects); err != nil {
+		return nil, err
+	}
+
+	return projects, nil
+}
+
 func (r *ProjectRepo) GetFavoritesProjects(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
 	var projects []domain.ProjectData
 	var user domain.UserLikesFavorites

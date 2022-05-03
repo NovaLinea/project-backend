@@ -57,6 +57,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			user.GET("/:userID/delete-account", h.DeleteAccount)
 			user.GET("/:userID/get-likes-favorites", h.GetLikesFavorites)
 			user.GET("/:userID/get-data-params", h.GetDataParams)
+			user.GET("/:userID/get-followings", h.GetFollowings)
 			user.GET("/:userID/subscribe/:accountID", h.SubscribeUser)
 			user.GET("/:userID/unsubscribe/:accountID", h.UnSubscribeUser)
 		}
@@ -66,6 +67,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			project.POST("/:ID/create", h.CreateProject)
 			project.GET("/:ID/get-projects-popular", h.GetProjectsPopular)
 			project.GET("/:ID/get-projects-user", h.GetProjectsUser)
+			project.GET("/:ID/get-projects-home", h.GetProjectsHome)
 			project.GET("/:ID/get-favorites-projects", h.GetFavoritesProjects)
 			project.GET("/:ID/like/:userID", h.LikeProject)
 			project.GET("/:ID/dislike/:userID", h.DislikeProject)

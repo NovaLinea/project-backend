@@ -28,7 +28,6 @@ type UserProfile struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name        string             `json:"name" binding:"required"`
 	Description string             `json:"description"`
-	VerifyEmail bool               `json:"verify_email"`
 	Photo       string             `json:"photo"`
 }
 
@@ -60,7 +59,7 @@ type UserLikesFavorites struct {
 	Likes     []primitive.ObjectID `json:"likes"`
 }
 
-type UserDataParams struct {
+type UserFollowsFollowings struct {
 	ID         primitive.ObjectID   `json:"id" bson:"_id,omitempty"`
 	Follows    []primitive.ObjectID `json:"follows"`
 	Followings []primitive.ObjectID `json:"followings"`

@@ -82,11 +82,11 @@ func (r *UserRepo) GetLikesFavorites(ctx context.Context, userID primitive.Objec
 	return lists, nil
 }
 
-func (r *UserRepo) GetDataParams(ctx context.Context, userID primitive.ObjectID) (domain.UserDataParams, error) {
-	var data domain.UserDataParams
+func (r *UserRepo) GetDataParams(ctx context.Context, userID primitive.ObjectID) (domain.UserFollowsFollowings, error) {
+	var data domain.UserFollowsFollowings
 
 	if err := r.db.FindOne(ctx, bson.M{"_id": userID}).Decode(&data); err != nil {
-		return domain.UserDataParams{}, err
+		return domain.UserFollowsFollowings{}, err
 	}
 
 	return data, nil

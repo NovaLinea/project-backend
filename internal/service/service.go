@@ -30,7 +30,7 @@ type User interface {
 	ChangePassword(ctx context.Context, userID primitive.ObjectID, inp domain.ChangePassword) error
 	DeleteAccount(ctx context.Context, userID primitive.ObjectID) error
 	GetLikesFavorites(ctx context.Context, userID primitive.ObjectID) (domain.UserLikesFavorites, error)
-	GetDataParams(ctx context.Context, userID primitive.ObjectID) (domain.UserDataParams, error)
+	GetDataParams(ctx context.Context, userID primitive.ObjectID) (domain.UserFollowsFollowings, error)
 	SubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error
 	UnSubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error
 }
@@ -39,6 +39,7 @@ type Project interface {
 	CreateProject(ctx context.Context, inp domain.ProjectData) error
 	GetProjectsPopular(ctx context.Context) ([]domain.ProjectData, error)
 	GetProjectsUser(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error)
+	GetProjectsHome(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error)
 	GetFavoritesProjects(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error)
 	LikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error
 	DislikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error
