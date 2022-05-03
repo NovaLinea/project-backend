@@ -108,7 +108,7 @@ func (h *Handler) GetLikesFavorites(c *gin.Context) {
 }
 
 func (h *Handler) GetFollowsFollowings(c *gin.Context, userID primitive.ObjectID) domain.UserFollowsFollowings {
-	data, err := h.services.GetDataParams(c, userID)
+	data, err := h.services.GetFollowsFollowings(c, userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return domain.UserFollowsFollowings{}
@@ -132,7 +132,7 @@ func (h *Handler) GetDataParams(c *gin.Context) {
 	})
 }
 
-func (h *Handler) GetFollowings(c *gin.Context) {
+func (h *Handler) GetListFollowings(c *gin.Context) {
 	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -179,4 +179,36 @@ func (h *Handler) UnSubscribeUser(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
+}
+
+func (h *Handler) GetFollows(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	follows, err := h.services.GetFollows(c, userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, follows)
+}
+
+func (h *Handler) GetFollowings(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	followings, err := h.services.GetFollowings(c, userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, followings)
 }

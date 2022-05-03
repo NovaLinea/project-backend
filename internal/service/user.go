@@ -66,8 +66,8 @@ func (s *UserService) GetLikesFavorites(ctx context.Context, userID primitive.Ob
 	return lists, err
 }
 
-func (s *UserService) GetDataParams(ctx context.Context, userID primitive.ObjectID) (domain.UserFollowsFollowings, error) {
-	data, err := s.repo.GetDataParams(ctx, userID)
+func (s *UserService) GetFollowsFollowings(ctx context.Context, userID primitive.ObjectID) (domain.UserFollowsFollowings, error) {
+	data, err := s.repo.GetFollowsFollowings(ctx, userID)
 	return data, err
 }
 
@@ -79,4 +79,14 @@ func (s *UserService) SubscribeUser(ctx context.Context, userID, accoumtID primi
 func (s *UserService) UnSubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error {
 	err := s.repo.UnSubscribeUser(ctx, userID, accoumtID)
 	return err
+}
+
+func (s *UserService) GetFollows(ctx context.Context, userID primitive.ObjectID) ([]domain.UserProfile, error) {
+	projects, err := s.repo.GetFollows(ctx, userID)
+	return projects, err
+}
+
+func (s *UserService) GetFollowings(ctx context.Context, userID primitive.ObjectID) ([]domain.UserProfile, error) {
+	projects, err := s.repo.GetFollowings(ctx, userID)
+	return projects, err
 }

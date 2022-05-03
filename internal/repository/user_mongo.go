@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserRepo struct {
@@ -82,7 +83,7 @@ func (r *UserRepo) GetLikesFavorites(ctx context.Context, userID primitive.Objec
 	return lists, nil
 }
 
-func (r *UserRepo) GetDataParams(ctx context.Context, userID primitive.ObjectID) (domain.UserFollowsFollowings, error) {
+func (r *UserRepo) GetFollowsFollowings(ctx context.Context, userID primitive.ObjectID) (domain.UserFollowsFollowings, error) {
 	var data domain.UserFollowsFollowings
 
 	if err := r.db.FindOne(ctx, bson.M{"_id": userID}).Decode(&data); err != nil {
@@ -110,4 +111,58 @@ func (r *UserRepo) UnSubscribeUser(ctx context.Context, userID, accoumtID primit
 
 	_, err = r.db.UpdateOne(ctx, bson.M{"_id": accoumtID}, bson.M{"$pull": bson.M{"follows": userID}})
 	return err
+}
+
+func (r *UserRepo) GetFollows(ctx context.Context, userID primitive.ObjectID) ([]domain.UserProfile, error) {
+	var follows []domain.UserProfile
+
+	data, err := r.GetFollowsFollowings(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	filter := bson.M{"_id": bson.M{"$in": data.Follows}}
+	sort := bson.M{"time": -1}
+
+	opts := options.FindOptions{
+		Sort: &sort,
+	}
+
+	cur, err := r.db.Find(ctx, filter, &opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := cur.All(ctx, &follows); err != nil {
+		return nil, err
+	}
+
+	return follows, nil
+}
+
+func (r *UserRepo) GetFollowings(ctx context.Context, userID primitive.ObjectID) ([]domain.UserProfile, error) {
+	var followings []domain.UserProfile
+
+	data, err := r.GetFollowsFollowings(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	filter := bson.M{"_id": bson.M{"$in": data.Followings}}
+	sort := bson.M{"time": -1}
+
+	opts := options.FindOptions{
+		Sort: &sort,
+	}
+
+	cur, err := r.db.Find(ctx, filter, &opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := cur.All(ctx, &followings); err != nil {
+		return nil, err
+	}
+
+	return followings, nil
 }
