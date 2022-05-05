@@ -152,3 +152,13 @@ func (r *ProjectRepo) RemoveFavoriteProject(ctx context.Context, projectID, user
 	_, err := r.db.Database().Collection(usersCollection).UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$pull": bson.M{"favorites": projectID}})
 	return err
 }
+
+func (r *ProjectRepo) GetDataProject(ctx context.Context, projectID primitive.ObjectID) (domain.ProjectData, error) {
+	var data domain.ProjectData
+
+	if err := r.db.FindOne(ctx, bson.M{"_id": projectID}).Decode(&data); err != nil {
+		return domain.ProjectData{}, err
+	}
+
+	return data, nil
+}

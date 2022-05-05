@@ -42,6 +42,7 @@ type Project interface {
 	DislikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error
 	FavoriteProject(ctx context.Context, projectID, userID primitive.ObjectID) error
 	RemoveFavoriteProject(ctx context.Context, projectID, userID primitive.ObjectID) error
+	GetDataProject(ctx context.Context, projectID primitive.ObjectID) (domain.ProjectData, error)
 }
 
 type Repository struct {

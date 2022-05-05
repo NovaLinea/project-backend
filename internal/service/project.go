@@ -67,3 +67,8 @@ func (s *ProjectService) RemoveFavoriteProject(ctx context.Context, projectID, u
 	err := s.repo.RemoveFavoriteProject(ctx, projectID, userID)
 	return err
 }
+
+func (s *ProjectService) GetDataProject(ctx context.Context, projectID primitive.ObjectID) (domain.ProjectData, error) {
+	data, err := s.repo.GetDataProject(ctx, projectID)
+	return data, err
+}

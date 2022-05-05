@@ -169,3 +169,19 @@ func (h *Handler) RemoveFavoriteProject(c *gin.Context) {
 		return
 	}
 }
+
+func (h *Handler) GetDataProject(c *gin.Context) {
+	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	data, err := h.services.GetDataProject(c, projectID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, data)
+}

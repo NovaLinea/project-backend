@@ -44,7 +44,7 @@ func (r *UserRepo) SaveData(ctx context.Context, userID primitive.ObjectID, inp 
 		return err
 	}
 
-	_, err = r.db.Database().Collection(projectsCollection).UpdateOne(ctx, bson.M{"userid": userID}, bson.M{"$set": bson.M{"namecreator": inp.Name}})
+	_, err = r.db.Database().Collection(projectsCollection).UpdateMany(ctx, bson.M{"userid": userID}, bson.M{"$set": bson.M{"namecreator": inp.Name}})
 	return err
 }
 
