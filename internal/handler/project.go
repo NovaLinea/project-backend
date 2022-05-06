@@ -185,3 +185,16 @@ func (h *Handler) GetDataProject(c *gin.Context) {
 
 	c.JSON(http.StatusOK, data)
 }
+
+func (h *Handler) DeleteProject(c *gin.Context) {
+	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := h.services.DeleteProject(c, projectID); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+}

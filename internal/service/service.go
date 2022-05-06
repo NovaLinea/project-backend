@@ -48,6 +48,7 @@ type Project interface {
 	FavoriteProject(ctx context.Context, projectID, userID primitive.ObjectID) error
 	RemoveFavoriteProject(ctx context.Context, projectID, userID primitive.ObjectID) error
 	GetDataProject(ctx context.Context, projectID primitive.ObjectID) (domain.ProjectData, error)
+	DeleteProject(ctx context.Context, projectID primitive.ObjectID) error
 }
 
 type Service struct {

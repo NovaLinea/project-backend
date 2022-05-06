@@ -72,3 +72,8 @@ func (s *ProjectService) GetDataProject(ctx context.Context, projectID primitive
 	data, err := s.repo.GetDataProject(ctx, projectID)
 	return data, err
 }
+
+func (s *ProjectService) DeleteProject(ctx context.Context, projectID primitive.ObjectID) error {
+	err := s.repo.DeleteProject(ctx, projectID)
+	return err
+}

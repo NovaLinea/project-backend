@@ -162,3 +162,8 @@ func (r *ProjectRepo) GetDataProject(ctx context.Context, projectID primitive.Ob
 
 	return data, nil
 }
+
+func (r *ProjectRepo) DeleteProject(ctx context.Context, projectID primitive.ObjectID) error {
+	_, err := r.db.DeleteOne(ctx, bson.M{"_id": projectID})
+	return err
+}
