@@ -167,3 +167,8 @@ func (r *ProjectRepo) DeleteProject(ctx context.Context, projectID primitive.Obj
 	_, err := r.db.DeleteOne(ctx, bson.M{"_id": projectID})
 	return err
 }
+
+func (r *ProjectRepo) EditProject(ctx context.Context, inp domain.ProjectEdit) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": inp.ID}, bson.M{"$set": bson.M{"name": inp.Name, "description": inp.Description, "price": inp.Price, "paymentsystem": inp.PaymentSystem, "staff": inp.Staff, "editingtime": inp.EditingTime}})
+	return err
+}

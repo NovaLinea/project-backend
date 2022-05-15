@@ -77,6 +77,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			project.GET("/:ID/remove-favorite/:userID", h.RemoveFavoriteProject)
 			project.GET("/:ID/get-data-project", h.GetDataProject)
 			project.GET("/:ID/delete-project", h.DeleteProject)
+			project.POST("/:ID/save-changes", h.EditProject)
 		}
 	}
 

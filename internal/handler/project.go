@@ -198,3 +198,23 @@ func (h *Handler) DeleteProject(c *gin.Context) {
 		return
 	}
 }
+
+func (h *Handler) EditProject(c *gin.Context) {
+	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var inp domain.ProjectEdit
+	if err := c.BindJSON(&inp); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid input body")
+		return
+	}
+	inp.ID = projectID
+
+	if err := h.services.EditProject(c, inp); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+}

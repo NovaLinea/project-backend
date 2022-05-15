@@ -77,3 +77,8 @@ func (s *ProjectService) DeleteProject(ctx context.Context, projectID primitive.
 	err := s.repo.DeleteProject(ctx, projectID)
 	return err
 }
+
+func (s *ProjectService) EditProject(ctx context.Context, inp domain.ProjectEdit) error {
+	err := s.repo.EditProject(ctx, inp)
+	return err
+}
