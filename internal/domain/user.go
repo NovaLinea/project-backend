@@ -2,6 +2,10 @@ package domain
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
+type UserID struct {
+	ID primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+}
+
 type UserAuth struct {
 	ID       primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name     string             `json:"name"`

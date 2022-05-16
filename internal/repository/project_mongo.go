@@ -164,7 +164,42 @@ func (r *ProjectRepo) GetDataProject(ctx context.Context, projectID primitive.Ob
 }
 
 func (r *ProjectRepo) DeleteProject(ctx context.Context, projectID primitive.ObjectID) error {
-	_, err := r.db.DeleteOne(ctx, bson.M{"_id": projectID})
+	var users []domain.UserID
+
+	cur, err := r.db.Database().Collection(usersCollection).Find(ctx, bson.M{"likes": bson.M{"$all": []primitive.ObjectID{projectID}}})
+	if err != nil {
+		return err
+	}
+
+	if err := cur.All(ctx, &users); err != nil {
+		return err
+	}
+
+	for _, user := range users {
+		_, err = r.db.Database().Collection(usersCollection).UpdateOne(ctx, bson.M{"_id": user.ID}, bson.M{"$pull": bson.M{"likes": projectID}})
+		if err != nil {
+			return err
+		}
+	}
+
+	users = []domain.UserID{}
+	cur, err = r.db.Database().Collection(usersCollection).Find(ctx, bson.M{"favorites": bson.M{"$all": []primitive.ObjectID{projectID}}})
+	if err != nil {
+		return err
+	}
+
+	if err := cur.All(ctx, &users); err != nil {
+		return err
+	}
+
+	for _, user := range users {
+		_, err = r.db.Database().Collection(usersCollection).UpdateOne(ctx, bson.M{"_id": user.ID}, bson.M{"$pull": bson.M{"favorites": projectID}})
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = r.db.DeleteOne(ctx, bson.M{"_id": projectID})
 	return err
 }
 
