@@ -42,10 +42,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		auth := api.Group("/auth")
 		{
-			auth.POST("/signup", h.Register)
-			auth.POST("/signin", h.Login)
-			auth.GET("/refresh", h.Refresh)
-			auth.GET("/logout", h.Logout)
+			auth.POST("/register", h.Register)
+			auth.POST("/login", h.Login)
+			auth.GET("/refresh", h.userIdentity)
 		}
 
 		user := api.Group("/user")

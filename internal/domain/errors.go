@@ -3,7 +3,7 @@ package domain
 import "errors"
 
 var (
-	ErrUserNotFound  = errors.New("Incorrent login or password")
-	ErrGenerateToken = errors.New("Could not login")
-	ErrReplayUsername = errors.New("Such username is already in use")
+	ErrUserNotFound   = errors.New("Неверный логин или пароль")
+	ErrGenerateToken  = errors.New("Could not login")
+	ErrReplayUsername = errors.New("Такая поста уже используется")
 )
