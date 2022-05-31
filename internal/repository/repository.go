@@ -12,37 +12,39 @@ import (
 type Authorization interface {
 	CreateUser(ctx context.Context, name, email, password string) error
 	GetUser(ctx context.Context, email, password string) (domain.UserAuth, error)
-	CheckUser(ctx context.Context, userID primitive.ObjectID) (domain.UserProfile, error)
+	CheckUser(ctx context.Context, userID primitive.ObjectID) (domain.UserReduxData, error)
 }
 
 type User interface {
 	GetDataProfile(ctx context.Context, userID primitive.ObjectID) (domain.UserProfile, error)
-	GetDataSettings(ctx context.Context, userID primitive.ObjectID) (domain.UserSettings, error)
-	SaveData(ctx context.Context, userID primitive.ObjectID, inp domain.UserSettings) error
+	GetSettings(ctx context.Context, userID primitive.ObjectID) (domain.UserSettings, error)
+	Save(ctx context.Context, userID primitive.ObjectID, inp domain.UserSaveSettings) error
 	GetPasswordHash(ctx context.Context, userID primitive.ObjectID) (string, error)
 	ChangePassword(ctx context.Context, userID primitive.ObjectID, password string) error
 	DeleteAccount(ctx context.Context, userID primitive.ObjectID) error
 	GetLikesFavorites(ctx context.Context, userID primitive.ObjectID) (domain.UserLikesFavorites, error)
 	GetFollowsFollowings(ctx context.Context, userID primitive.ObjectID) (domain.UserFollowsFollowings, error)
-	SubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error
-	UnSubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error
+	CheckSubscribe(ctx context.Context, fromID, toID primitive.ObjectID) (bool, error)
+	Subscribe(ctx context.Context, userID, accoumtID primitive.ObjectID) error
+	UnSubscribe(ctx context.Context, userID, accoumtID primitive.ObjectID) error
 	GetFollows(ctx context.Context, userID primitive.ObjectID) ([]domain.UserProfile, error)
 	GetFollowings(ctx context.Context, userID primitive.ObjectID) ([]domain.UserProfile, error)
 }
 
 type Project interface {
-	CreateProject(ctx context.Context, inp domain.ProjectData) error
-	GetProjectsPopular(ctx context.Context) ([]domain.ProjectData, error)
-	GetProjectsUser(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error)
-	GetProjectsHome(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error)
-	GetFavoritesProjects(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error)
-	LikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error
-	DislikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error
-	FavoriteProject(ctx context.Context, projectID, userID primitive.ObjectID) error
-	RemoveFavoriteProject(ctx context.Context, projectID, userID primitive.ObjectID) error
+	GetPopular(ctx context.Context) ([]domain.ProjectData, error)
 	GetDataProject(ctx context.Context, projectID primitive.ObjectID) (domain.ProjectData, error)
+
+	Create(ctx context.Context, inp domain.ProjectData) error
+	GetProjectsUser(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error)
+	GetHome(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error)
+	GetFavorites(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error)
+	Like(ctx context.Context, projectID, userID primitive.ObjectID) error
+	Dislike(ctx context.Context, projectID, userID primitive.ObjectID) error
+	Favorite(ctx context.Context, projectID, userID primitive.ObjectID) error
+	RemoveFavorite(ctx context.Context, projectID, userID primitive.ObjectID) error
 	DeleteProject(ctx context.Context, projectID primitive.ObjectID) error
-	EditProject(ctx context.Context, inp domain.ProjectEdit) error
+	Update(ctx context.Context, inp domain.ProjectEdit) error
 }
 
 type Repository struct {

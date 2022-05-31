@@ -18,14 +18,7 @@ func NewProjectRepo(db *mongo.Database) *ProjectRepo {
 	return &ProjectRepo{db: db.Collection(projectsCollection)}
 }
 
-func (r *ProjectRepo) CreateProject(ctx context.Context, inp domain.ProjectData) error {
-	inp.Comments = []string{}
-
-	_, err := r.db.InsertOne(ctx, inp)
-	return err
-}
-
-func (r *ProjectRepo) GetProjectsPopular(ctx context.Context) ([]domain.ProjectData, error) {
+func (r *ProjectRepo) GetPopular(ctx context.Context) ([]domain.ProjectData, error) {
 	var projects []domain.ProjectData
 
 	filter := bson.M{}
@@ -45,6 +38,21 @@ func (r *ProjectRepo) GetProjectsPopular(ctx context.Context) ([]domain.ProjectD
 	}
 
 	return projects, nil
+}
+
+func (r *ProjectRepo) GetDataProject(ctx context.Context, projectID primitive.ObjectID) (domain.ProjectData, error) {
+	var data domain.ProjectData
+
+	if err := r.db.FindOne(ctx, bson.M{"_id": projectID}).Decode(&data); err != nil {
+		return domain.ProjectData{}, err
+	}
+
+	return data, nil
+}
+
+func (r *ProjectRepo) Create(ctx context.Context, inp domain.ProjectData) error {
+	_, err := r.db.InsertOne(ctx, inp)
+	return err
 }
 
 func (r *ProjectRepo) GetProjectsUser(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
@@ -69,7 +77,7 @@ func (r *ProjectRepo) GetProjectsUser(ctx context.Context, userID primitive.Obje
 	return projects, nil
 }
 
-func (r *ProjectRepo) GetProjectsHome(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
+func (r *ProjectRepo) GetHome(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
 	var projects []domain.ProjectData
 	var user domain.UserFollowsFollowings
 
@@ -96,7 +104,7 @@ func (r *ProjectRepo) GetProjectsHome(ctx context.Context, userID primitive.Obje
 	return projects, nil
 }
 
-func (r *ProjectRepo) GetFavoritesProjects(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
+func (r *ProjectRepo) GetFavorites(ctx context.Context, userID primitive.ObjectID) ([]domain.ProjectData, error) {
 	var projects []domain.ProjectData
 	var user domain.UserLikesFavorites
 
@@ -123,7 +131,7 @@ func (r *ProjectRepo) GetFavoritesProjects(ctx context.Context, userID primitive
 	return projects, nil
 }
 
-func (r *ProjectRepo) LikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error {
+func (r *ProjectRepo) Like(ctx context.Context, projectID, userID primitive.ObjectID) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": projectID}, bson.M{"$inc": bson.M{"likes": 1}})
 	if err != nil {
 		return err
@@ -133,7 +141,7 @@ func (r *ProjectRepo) LikeProject(ctx context.Context, projectID, userID primiti
 	return err
 }
 
-func (r *ProjectRepo) DislikeProject(ctx context.Context, projectID, userID primitive.ObjectID) error {
+func (r *ProjectRepo) Dislike(ctx context.Context, projectID, userID primitive.ObjectID) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": projectID}, bson.M{"$inc": bson.M{"likes": -1}})
 	if err != nil {
 		return err
@@ -143,24 +151,14 @@ func (r *ProjectRepo) DislikeProject(ctx context.Context, projectID, userID prim
 	return err
 }
 
-func (r *ProjectRepo) FavoriteProject(ctx context.Context, projectID, userID primitive.ObjectID) error {
+func (r *ProjectRepo) Favorite(ctx context.Context, projectID, userID primitive.ObjectID) error {
 	_, err := r.db.Database().Collection(usersCollection).UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$push": bson.M{"favorites": projectID}})
 	return err
 }
 
-func (r *ProjectRepo) RemoveFavoriteProject(ctx context.Context, projectID, userID primitive.ObjectID) error {
+func (r *ProjectRepo) RemoveFavorite(ctx context.Context, projectID, userID primitive.ObjectID) error {
 	_, err := r.db.Database().Collection(usersCollection).UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$pull": bson.M{"favorites": projectID}})
 	return err
-}
-
-func (r *ProjectRepo) GetDataProject(ctx context.Context, projectID primitive.ObjectID) (domain.ProjectData, error) {
-	var data domain.ProjectData
-
-	if err := r.db.FindOne(ctx, bson.M{"_id": projectID}).Decode(&data); err != nil {
-		return domain.ProjectData{}, err
-	}
-
-	return data, nil
 }
 
 func (r *ProjectRepo) DeleteProject(ctx context.Context, projectID primitive.ObjectID) error {
@@ -203,7 +201,16 @@ func (r *ProjectRepo) DeleteProject(ctx context.Context, projectID primitive.Obj
 	return err
 }
 
-func (r *ProjectRepo) EditProject(ctx context.Context, inp domain.ProjectEdit) error {
-	_, err := r.db.UpdateOne(ctx, bson.M{"_id": inp.ID}, bson.M{"$set": bson.M{"name": inp.Name, "description": inp.Description, "price": inp.Price, "paymentsystem": inp.PaymentSystem, "staff": inp.Staff, "editingtime": inp.EditingTime}})
+func (r *ProjectRepo) Update(ctx context.Context, inp domain.ProjectEdit) error {
+	_, err := r.db.UpdateOne(ctx, bson.M{"_id": inp.ID}, bson.M{
+		"$set": bson.M{
+			"name":          inp.Name,
+			"description":   inp.Description,
+			"price":         inp.Price,
+			"paymentsystem": inp.PaymentSystem,
+			"staff":         inp.Staff,
+			"updatedat":     inp.UpdatedAt,
+		},
+	})
 	return err
 }

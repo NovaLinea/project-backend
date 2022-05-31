@@ -29,7 +29,7 @@ func (h *Handler) Register(c *gin.Context) {
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"accessToken": res.AccessToken,
-		"userID":      res.UserID,
+		"id":          res.UserID,
 	})
 }
 
@@ -54,6 +54,6 @@ func (h *Handler) Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"accessToken": res.AccessToken,
-		"userID":      res.UserID,
+		"id":          res.UserID,
 	})
 }

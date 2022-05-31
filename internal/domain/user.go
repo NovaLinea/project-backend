@@ -1,6 +1,10 @@
 package domain
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type UserID struct {
 	ID primitive.ObjectID `json:"id" bson:"_id,omitempty"`
@@ -19,13 +23,13 @@ type UserCreate struct {
 	Email         string               `json:"email" binding:"required"`
 	Password      string               `json:"password" binding:"required"`
 	Description   string               `json:"description"`
-	VerifyEmail   bool                 `json:"verify_email"`
 	Photo         string               `json:"photo"`
 	Follows       []primitive.ObjectID `json:"follows"`
 	Followings    []primitive.ObjectID `json:"followings"`
 	Favorites     []primitive.ObjectID `json:"favorites"`
 	Likes         []primitive.ObjectID `json:"likes"`
 	Notifications TypeNotifications    `json:"notifications"`
+	CreatedAt     time.Time            `json:"created_at" binding:"required"`
 }
 
 type UserProfile struct {
@@ -35,11 +39,22 @@ type UserProfile struct {
 	Photo       string             `json:"photo"`
 }
 
+type UserReduxData struct {
+	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Name        string             `json:"name" binding:"required"`
+	Email       string             `json:"email" binding:"required"`
+	Description string             `json:"description"`
+	Photo       string             `json:"photo"`
+}
+
 type UserSettings struct {
+	Notifications TypeNotifications `json:"notifications"`
+}
+
+type UserSaveSettings struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name          string             `json:"name" binding:"required"`
 	Email         string             `json:"email" binding:"required"`
-	VerifyEmail   bool               `json:"verify_email"`
 	Description   string             `json:"description"`
 	Notifications TypeNotifications  `json:"notifications"`
 }

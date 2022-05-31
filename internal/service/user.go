@@ -29,13 +29,13 @@ func (s *UserService) GetDataProfile(ctx context.Context, userID primitive.Objec
 	return data, err
 }
 
-func (s *UserService) GetDataSettings(ctx context.Context, userID primitive.ObjectID) (domain.UserSettings, error) {
-	data, err := s.repo.GetDataSettings(ctx, userID)
+func (s *UserService) GetSettings(ctx context.Context, userID primitive.ObjectID) (domain.UserSettings, error) {
+	data, err := s.repo.GetSettings(ctx, userID)
 	return data, err
 }
 
-func (s *UserService) SaveData(ctx context.Context, userID primitive.ObjectID, inp domain.UserSettings) error {
-	err := s.repo.SaveData(ctx, userID, inp)
+func (s *UserService) Save(ctx context.Context, userID primitive.ObjectID, inp domain.UserSaveSettings) error {
+	err := s.repo.Save(ctx, userID, inp)
 	return err
 }
 
@@ -71,13 +71,18 @@ func (s *UserService) GetFollowsFollowings(ctx context.Context, userID primitive
 	return data, err
 }
 
-func (s *UserService) SubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error {
-	err := s.repo.SubscribeUser(ctx, userID, accoumtID)
+func (s *UserService) CheckSubscribe(ctx context.Context, fromID, toID primitive.ObjectID) (bool, error) {
+	status, err := s.repo.CheckSubscribe(ctx, fromID, toID)
+	return status, err
+}
+
+func (s *UserService) Subscribe(ctx context.Context, userID, accoumtID primitive.ObjectID) error {
+	err := s.repo.Subscribe(ctx, userID, accoumtID)
 	return err
 }
 
-func (s *UserService) UnSubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error {
-	err := s.repo.UnSubscribeUser(ctx, userID, accoumtID)
+func (s *UserService) UnSubscribe(ctx context.Context, userID, accoumtID primitive.ObjectID) error {
+	err := s.repo.UnSubscribe(ctx, userID, accoumtID)
 	return err
 }
 

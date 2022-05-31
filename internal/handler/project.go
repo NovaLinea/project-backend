@@ -8,166 +8,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (h *Handler) CreateProject(c *gin.Context) {
-	userID, err := primitive.ObjectIDFromHex(c.Param("ID"))
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	var inp domain.ProjectData
-	if err := c.BindJSON(&inp); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "Invalid input body")
-		return
-	}
-	inp.UserID = userID
-
-	userData, err := h.services.GetDataProfile(c, userID)
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-	inp.NameCreator = userData.Name
-	inp.PhotoCreator = userData.Photo
-
-	if err := h.services.CreateProject(c, inp); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-}
-
-func (h *Handler) GetProjectsPopular(c *gin.Context) {
-	projects, err := h.services.GetProjectsPopular(c)
+func (h *Handler) GetPopular(c *gin.Context) {
+	projects, err := h.services.GetPopular(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, projects)
-}
-
-func (h *Handler) GetProjectsUser(c *gin.Context) {
-	userID, err := primitive.ObjectIDFromHex(c.Param("ID"))
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	projects, err := h.services.GetProjectsUser(c, userID)
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, projects)
-}
-
-func (h *Handler) GetProjectsHome(c *gin.Context) {
-	userID, err := primitive.ObjectIDFromHex(c.Param("ID"))
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	projects, err := h.services.GetProjectsHome(c, userID)
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, projects)
-}
-
-func (h *Handler) GetFavoritesProjects(c *gin.Context) {
-	userID, err := primitive.ObjectIDFromHex(c.Param("ID"))
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	projects, err := h.services.GetFavoritesProjects(c, userID)
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, projects)
-}
-
-func (h *Handler) LikeProject(c *gin.Context) {
-	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	if err := h.services.LikeProject(c, projectID, userID); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-}
-
-func (h *Handler) DislikeProject(c *gin.Context) {
-	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	if err := h.services.DislikeProject(c, projectID, userID); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-}
-
-func (h *Handler) FavoriteProject(c *gin.Context) {
-	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	if err := h.services.FavoriteProject(c, projectID, userID); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-}
-
-func (h *Handler) RemoveFavoriteProject(c *gin.Context) {
-	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	if err := h.services.RemoveFavoriteProject(c, projectID, userID); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
 }
 
 func (h *Handler) GetDataProject(c *gin.Context) {
@@ -186,6 +34,158 @@ func (h *Handler) GetDataProject(c *gin.Context) {
 	c.JSON(http.StatusOK, data)
 }
 
+func (h *Handler) Create(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var inp domain.ProjectData
+	if err := c.BindJSON(&inp); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid input body")
+		return
+	}
+	inp.CreatorID = userID
+
+	userData, err := h.services.GetDataProfile(c, userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	inp.CreatorName = userData.Name
+	inp.CreatorPhoto = userData.Photo
+
+	if err := h.services.Create(c, inp); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+}
+
+func (h *Handler) GetProjectsUser(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	projects, err := h.services.GetProjectsUser(c, userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, projects)
+}
+
+func (h *Handler) GetHome(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	projects, err := h.services.GetHome(c, userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, projects)
+}
+
+func (h *Handler) GetFavorites(c *gin.Context) {
+	userID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	projects, err := h.services.GetFavorites(c, userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, projects)
+}
+
+func (h *Handler) Like(c *gin.Context) {
+	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := h.services.Like(c, projectID, userID); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+}
+
+func (h *Handler) Dislike(c *gin.Context) {
+	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := h.services.Dislike(c, projectID, userID); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+}
+
+func (h *Handler) Favorite(c *gin.Context) {
+	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := h.services.Favorite(c, projectID, userID); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+}
+
+func (h *Handler) RemoveFavorite(c *gin.Context) {
+	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := h.services.RemoveFavorite(c, projectID, userID); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+}
+
 func (h *Handler) DeleteProject(c *gin.Context) {
 	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
 	if err != nil {
@@ -199,7 +199,7 @@ func (h *Handler) DeleteProject(c *gin.Context) {
 	}
 }
 
-func (h *Handler) EditProject(c *gin.Context) {
+func (h *Handler) Update(c *gin.Context) {
 	projectID, err := primitive.ObjectIDFromHex(c.Param("ID"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -213,7 +213,7 @@ func (h *Handler) EditProject(c *gin.Context) {
 	}
 	inp.ID = projectID
 
-	if err := h.services.EditProject(c, inp); err != nil {
+	if err := h.services.Update(c, inp); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}

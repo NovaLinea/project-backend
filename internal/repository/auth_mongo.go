@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/ProjectUnion/project-backend.git/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
@@ -36,6 +37,7 @@ func (r *AuthorizationRepo) CreateUser(ctx context.Context, name, email, passwor
 	inp.Followings = []primitive.ObjectID{}
 	inp.Likes = []primitive.ObjectID{}
 	inp.Notifications = ntfs
+	inp.CreatedAt = time.Now().UTC()
 
 	_, err := r.db.InsertOne(ctx, inp)
 	return err
@@ -54,14 +56,14 @@ func (r *AuthorizationRepo) GetUser(ctx context.Context, email, password string)
 	return user, nil
 }
 
-func (r *AuthorizationRepo) CheckUser(ctx context.Context, userID primitive.ObjectID) (domain.UserProfile, error) {
-	var user domain.UserProfile
+func (r *AuthorizationRepo) CheckUser(ctx context.Context, userID primitive.ObjectID) (domain.UserReduxData, error) {
+	var user domain.UserReduxData
 
 	if err := r.db.FindOne(ctx, bson.M{"_id": userID}).Decode(&user); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return domain.UserProfile{}, domain.ErrUserNotFound
+			return domain.UserReduxData{}, domain.ErrUserNotFound
 		}
-		return domain.UserProfile{}, err
+		return domain.UserReduxData{}, err
 	}
 
 	return user, nil

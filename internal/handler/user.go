@@ -31,7 +31,7 @@ func (h *Handler) GetDataSettings(c *gin.Context) {
 		return
 	}
 
-	data, err := h.services.GetDataSettings(c, userID)
+	data, err := h.services.GetSettings(c, userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -47,13 +47,13 @@ func (h *Handler) SaveDataUser(c *gin.Context) {
 		return
 	}
 
-	var inp domain.UserSettings
+	var inp domain.UserSaveSettings
 	if err := c.BindJSON(&inp); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "Invalid input body")
 		return
 	}
 
-	if err := h.services.SaveData(c, userID, inp); err != nil {
+	if err := h.services.Save(c, userID, inp); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -143,6 +143,28 @@ func (h *Handler) GetListFollowings(c *gin.Context) {
 	c.JSON(http.StatusOK, data.Followings)
 }
 
+func (h *Handler) CheckSubscribe(c *gin.Context) {
+	fromID, err := primitive.ObjectIDFromHex(c.Param("userID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	toID, err := primitive.ObjectIDFromHex(c.Param("accountID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	status, err := h.services.CheckSubscribe(c, fromID, toID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, status)
+}
+
 func (h *Handler) SubscribeUser(c *gin.Context) {
 	userID, err := primitive.ObjectIDFromHex(c.Param("userID"))
 	if err != nil {
@@ -156,7 +178,7 @@ func (h *Handler) SubscribeUser(c *gin.Context) {
 		return
 	}
 
-	if err := h.services.SubscribeUser(c, userID, accountID); err != nil {
+	if err := h.services.Subscribe(c, userID, accountID); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -175,7 +197,7 @@ func (h *Handler) UnSubscribeUser(c *gin.Context) {
 		return
 	}
 
-	if err := h.services.UnSubscribeUser(c, userID, accountID); err != nil {
+	if err := h.services.UnSubscribe(c, userID, accountID); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}

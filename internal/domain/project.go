@@ -8,9 +8,9 @@ import (
 
 type ProjectData struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	UserID        primitive.ObjectID `json:"user_id" bson:"userid"`
-	NameCreator   string             `json:"name_creator" bson:"namecreator"`
-	PhotoCreator  string             `json:"photo_creator" bson:"photocreator"`
+	CreatorID     primitive.ObjectID `json:"creator_id" bson:"userid"`
+	CreatorName   string             `json:"creator_name" bson:"namecreator"`
+	CreatorPhoto  string             `json:"creator_photo" bson:"photocreator"`
 	Name          string             `json:"name" binding:"required"`
 	Description   string             `json:"description" binding:"required"`
 	Photos        []string           `json:"photos"`
@@ -18,11 +18,11 @@ type ProjectData struct {
 	PaymentSystem string             `json:"payment_system" bson:"paymentsystem"`
 	Staff         []string           `json:"staff"`
 	Progress      uint32             `json:"progress"`
+	Views         uint32             `json:"views"`
 	Likes         uint32             `json:"likes"`
-	Comments      []string           `json:"comments"`
 	Type          string             `json:"type" binding:"required"`
-	Time          time.Time          `json:"time" binding:"required"`
-	EditingTime   time.Time          `json:"editing_time" bson:"editingtime"`
+	CreatedAt     time.Time          `json:"created_at" bson:"createat"`
+	UpdatedAt     time.Time          `json:"updated_at" bson:"updatedat"`
 }
 
 type ProjectEdit struct {
@@ -33,5 +33,5 @@ type ProjectEdit struct {
 	Price         uint64             `json:"price"`
 	PaymentSystem string             `json:"payment_system" bson:"paymentsystem"`
 	Staff         []string           `json:"staff"`
-	EditingTime   time.Time          `json:"editing_time" bson:"editingtime"`
+	UpdatedAt     time.Time          `json:"updated_at" bson:"updatedat"`
 }

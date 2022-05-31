@@ -44,39 +44,48 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			auth.POST("/register", h.Register)
 			auth.POST("/login", h.Login)
-			auth.GET("/refresh", h.userIdentity)
+			auth.GET("/get-me", h.userIdentity)
+
+			userAuth := auth.Group("/user")
+			{
+				userAuth.GET("/:userID/get-settings", h.GetDataSettings)
+				userAuth.POST("/:userID/save", h.SaveDataUser)
+				userAuth.POST("/:userID/change-password", h.ChangePassword)
+				userAuth.GET("/:userID/delete", h.DeleteAccount)
+				userAuth.GET("/:userID/get-likes-favorites", h.GetLikesFavorites)
+				userAuth.GET("/:userID/get-followings", h.GetListFollowings)
+				userAuth.GET("/:userID/check-subscribe/:accountID", h.CheckSubscribe)
+				userAuth.GET("/:userID/subscribe/:accountID", h.SubscribeUser)
+				userAuth.GET("/:userID/unsubscribe/:accountID", h.UnSubscribeUser)
+			}
+
+			projectAuth := auth.Group("/project")
+			{
+				projectAuth.POST("/:ID/create", h.Create)
+				projectAuth.GET("/:ID/get-projects-user", h.GetProjectsUser)
+				projectAuth.GET("/:ID/get-home", h.GetHome)
+				projectAuth.GET("/:ID/get-favorites", h.GetFavorites)
+				projectAuth.GET("/:ID/like/:userID", h.Like)
+				projectAuth.GET("/:ID/dislike/:userID", h.Dislike)
+				projectAuth.GET("/:ID/favorite/:userID", h.Favorite)
+				projectAuth.GET("/:ID/remove-favorite/:userID", h.RemoveFavorite)
+				projectAuth.GET("/:ID/delete", h.DeleteProject)
+				projectAuth.POST("/:ID/save", h.Update)
+			}
 		}
 
 		user := api.Group("/user")
 		{
-			user.GET("/:userID/fetch-data-profile", h.GetDataProfile)
-			user.GET("/:userID/fetch-data-settings", h.GetDataSettings)
-			user.POST("/:userID/save-data", h.SaveDataUser)
-			user.POST("/:userID/change-password", h.ChangePassword)
-			user.GET("/:userID/delete-account", h.DeleteAccount)
-			user.GET("/:userID/get-likes-favorites", h.GetLikesFavorites)
-			user.GET("/:userID/get-data-params", h.GetDataParams)
-			user.GET("/:userID/get-list-followings", h.GetListFollowings)
-			user.GET("/:userID/subscribe/:accountID", h.SubscribeUser)
-			user.GET("/:userID/unsubscribe/:accountID", h.UnSubscribeUser)
+			user.GET("/:userID/get-data", h.GetDataProfile)
+			user.GET("/:userID/get-params", h.GetDataParams)
 			user.GET("/:userID/get-follows", h.GetFollows)
 			user.GET("/:userID/get-followings", h.GetFollowings)
 		}
 
 		project := api.Group("/project")
 		{
-			project.POST("/:ID/create", h.CreateProject)
-			project.GET("/:ID/get-projects-popular", h.GetProjectsPopular)
-			project.GET("/:ID/get-projects-user", h.GetProjectsUser)
-			project.GET("/:ID/get-projects-home", h.GetProjectsHome)
-			project.GET("/:ID/get-favorites-projects", h.GetFavoritesProjects)
-			project.GET("/:ID/like/:userID", h.LikeProject)
-			project.GET("/:ID/dislike/:userID", h.DislikeProject)
-			project.GET("/:ID/favorite/:userID", h.FavoriteProject)
-			project.GET("/:ID/remove-favorite/:userID", h.RemoveFavoriteProject)
-			project.GET("/:ID/get-data-project", h.GetDataProject)
-			project.GET("/:ID/delete-project", h.DeleteProject)
-			project.POST("/:ID/save-changes", h.EditProject)
+			project.GET("/:ID/get-popular", h.GetPopular)
+			project.GET("/:ID/get-data", h.GetDataProject)
 		}
 	}
 

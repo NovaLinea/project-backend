@@ -106,7 +106,7 @@ func (s *AuthorizationService) ParseToken(Token string) (string, error) {
 	return claims["sub"].(string), nil
 }
 
-func (s *AuthorizationService) CheckUser(ctx context.Context, userID primitive.ObjectID) (domain.UserProfile, error) {
+func (s *AuthorizationService) CheckUser(ctx context.Context, userID primitive.ObjectID) (domain.UserReduxData, error) {
 	user, err := s.repo.CheckUser(ctx, userID)
 	return user, err
 }

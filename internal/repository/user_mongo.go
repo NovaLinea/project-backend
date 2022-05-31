@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/ProjectUnion/project-backend.git/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
@@ -28,7 +29,7 @@ func (r *UserRepo) GetDataProfile(ctx context.Context, userID primitive.ObjectID
 	return data, nil
 }
 
-func (r *UserRepo) GetDataSettings(ctx context.Context, userID primitive.ObjectID) (domain.UserSettings, error) {
+func (r *UserRepo) GetSettings(ctx context.Context, userID primitive.ObjectID) (domain.UserSettings, error) {
 	var data domain.UserSettings
 
 	if err := r.db.FindOne(ctx, bson.M{"_id": userID}).Decode(&data); err != nil {
@@ -38,7 +39,7 @@ func (r *UserRepo) GetDataSettings(ctx context.Context, userID primitive.ObjectI
 	return data, nil
 }
 
-func (r *UserRepo) SaveData(ctx context.Context, userID primitive.ObjectID, inp domain.UserSettings) error {
+func (r *UserRepo) Save(ctx context.Context, userID primitive.ObjectID, inp domain.UserSaveSettings) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$set": bson.M{"name": inp.Name, "email": inp.Email, "description": inp.Description, "notifications": inp.Notifications}})
 	if err != nil {
 		return err
@@ -93,7 +94,20 @@ func (r *UserRepo) GetFollowsFollowings(ctx context.Context, userID primitive.Ob
 	return data, nil
 }
 
-func (r *UserRepo) SubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error {
+func (r *UserRepo) CheckSubscribe(ctx context.Context, fromID, toID primitive.ObjectID) (bool, error) {
+	var user domain.UserID
+
+	if err := r.db.FindOne(ctx, bson.M{"_id": fromID, "followings": bson.M{"$all": []primitive.ObjectID{toID}}}).Decode(&user); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (r *UserRepo) Subscribe(ctx context.Context, userID, accoumtID primitive.ObjectID) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$push": bson.M{"followings": accoumtID}})
 	if err != nil {
 		return err
@@ -103,7 +117,7 @@ func (r *UserRepo) SubscribeUser(ctx context.Context, userID, accoumtID primitiv
 	return err
 }
 
-func (r *UserRepo) UnSubscribeUser(ctx context.Context, userID, accoumtID primitive.ObjectID) error {
+func (r *UserRepo) UnSubscribe(ctx context.Context, userID, accoumtID primitive.ObjectID) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$pull": bson.M{"followings": accoumtID}})
 	if err != nil {
 		return err
